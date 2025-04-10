@@ -16,6 +16,8 @@ homepage: "https://www.cookietractor.com"
 documentation: "https://www.cookietractor.com/setup-instructions/google-tag-manager"
 versions:
   # Latest version
+  - sha: 6ae724d27cba584fe80f986f336789883416e422
+    changeNodes: Fixes bug with filtering undefined value
+  # Older versions
   - sha: 7e70d8ed1dae0f3ea8a99cae6472b6b5670d5ffc
     changeNotes: Initial release.
-  # Older versions
