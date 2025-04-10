@@ -14,7 +14,6 @@ ___INFO___
   "version": 1,
   "securityGroups": [],
   "displayName": "CookieTractor Consent State",
-  "categories": ["TAG_MANAGEMENT", "PERSONALIZATION", "ANALYTICS"],
   "description": "CookieTractor is the user-friendly CMP (Consent Management Platform) that complies with WCAG 2.2 accessibility requirements. For more information visit https://www.cookietractor.com.",
   "containerContexts": [
     "WEB"
@@ -28,7 +27,7 @@ ___TEMPLATE_PARAMETERS___
   {
     "type": "LABEL",
     "name": "label1",
-    "displayName": "\u003cb\u003eCheck Consent State\u003c/b\u003e\u003cbr/\u003e\nUse this variable to check for visitor e.g. with trigger conditions. The variable contains a comma separated list of given consents.\u003cbr/\u003e\u003cbr/\u003e\u003cb\u003eExample:\u003c/b\u003e marketing,statistical,functional,necessary\u003cbr/\u003e\n\u003cbr/\u003e\nTo check for marketing-consent, use a condition like this: {CookieTractor - Consent State} contains marketing\u003cbr/\u003e\n\u003cbr/\u003e\nAvalible categories:\u003cbr/\u003e\n\u003cbr/\u003e* marketing\u003cbr/\u003e* statistical\u003cbr/\u003e* functional\u003cbr/\u003e* necessary\u003cbr/\u003e\n\u003cbr/\u003e\nVisit our documentation for more information:\u003cbr/\u003e https://www.cookietractor.com/setup-instructions/google-tag-manager\u003efoo"
+    "displayName": "\u003cb\u003eCheck Consent State\u003c/b\u003e\u003cbr/\u003e\nUse this variable to check for visitor e.g. with trigger conditions. The variable contains a comma separated list of given consents.\u003cbr/\u003e\u003cbr/\u003e\u003cb\u003eExample:\u003c/b\u003e marketing,statistical,functional,necessary\u003cbr/\u003e\n\u003cbr/\u003e\nTo check for marketing-consent, use a condition like this: {CookieTractor - Consent State} contains marketing\u003cbr/\u003e\n\u003cbr/\u003e\nAvalible categories:\u003cbr/\u003e\n\u003cbr/\u003e* marketing\u003cbr/\u003e* statistical\u003cbr/\u003e* functional\u003cbr/\u003e* necessary\u003cbr/\u003e\n\u003cbr/\u003e\nVisit our documentation for more information:\u003cbr/\u003e https://www.cookietractor.com/setup-instructions/google-tag-manager"
   }
 ]
 
@@ -48,6 +47,8 @@ const LOG_PREFIX = 'CT.CMP > ';
 function parseConsentCookie(cookieValue) {
     if(!cookieValue)
         return {consents : []};
+    
+    // Prepared to allow chaning encoding to cookie-friendly decodeUriComponent in the future
     let isLegacyEncoding = cookieValue.indexOf(',') > -1;
     let decoded = isLegacyEncoding ? decodeUri(cookieValue) : decodeUriComponent(cookieValue);
     let parsed = JSON.parse(decoded);
@@ -55,15 +56,23 @@ function parseConsentCookie(cookieValue) {
 }
 
 /* Script */
+log(LOG_PREFIX,'TAG: Reading consents');
 
 var consentCookies = getCookieValues('_cc_cookieConsent');
 
+log(LOG_PREFIX,'TAG: Cookies',consentCookies);
+
 if(consentCookies && consentCookies.length > 0){
   
-  let cookieData = parseConsentCookie(consentCookies[0]);
-  cookieData = cookieData.filter(x=> x != 'undefined');
+  log(LOG_PREFIX,'TAG: Parsing',consentCookies);
   
-  log(LOG_PREFIX,'consents',cookieData.consents);
+  let cookieData = parseConsentCookie(consentCookies[0]);
+  
+  log(LOG_PREFIX,'TAG: Parsed',cookieData);
+  
+  cookieData.consents = cookieData.consents.filter(x => x != 'undefined');
+  
+  log(LOG_PREFIX,'consents',cookieData);
   
   return cookieData.consents.join(',');
 }
@@ -151,6 +160,6 @@ scenarios:
 
 ___NOTES___
 
-Created on 3/1/2024, 3:10:23 PM
+Created on 4/10/2025, 4:35:09 PM
 
 
